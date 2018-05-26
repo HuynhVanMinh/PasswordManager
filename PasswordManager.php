@@ -6,31 +6,53 @@
  * Time: 11:11 PM
  */
 
+
 class PasswordManager
 {
+
     private $user_name;
     private $encrypted_password;
 
-    public function setUserName($user_name)
+    /**
+     * set User name
+     *
+     * @param string $user_name
+     */
+    public function setUserName(string $user_name)
     {
         $this->user_name = $user_name;
     }
 
-    /*Encrypt Password*/
+    /**
+     * Encrypt Password
+     *
+     * @param string $password
+     * @return string
+     */
     protected function encrypt(string $password): string
     {
         return password_hash($password, PASSWORD_DEFAULT);
     }
 
-    /*Verify Password*/
+    /**
+     * Verify Password
+     *
+     * @param string $password
+     * @return bool
+     */
     protected function verifyPassword(string $password): bool
     {
-        if(password_verify($password, $this->encrypted_password))
+        if (password_verify($password, $this->encrypted_password))
             return true;
         return false;
     }
 
-    /*Validate Password*/
+    /**
+     * Validate Password
+     *
+     * @param string $password
+     * @return bool
+     */
     public function validatePassword(string $password): bool
     {
         echo '--------------Begin Validate------------------<br>';
@@ -64,10 +86,15 @@ class PasswordManager
         return $flag;
     }
 
-    /*Set new Password*/
+    /**
+     * Set new Password
+     *
+     * @param string $proposed_password
+     * @return bool
+     */
     public function setNewPassword(string $proposed_password): bool
     {
-        if($this->validatePassword($proposed_password)){
+        if ($this->validatePassword($proposed_password)) {
             $this->encrypted_password = $this->encrypt($proposed_password);
             return true;
         }
@@ -76,23 +103,35 @@ class PasswordManager
     }
 
 
-
-    /*
-     * Store and load file password.txt
-    */
+    /** Store and load file password.txt **/
     private $filename = 'password.txt';
-    public function store(){
+
+
+    /**
+     * Store data file password.txt
+     *
+     * @return bool
+     */
+    public function store():boo
+    {
         $data = json_encode([
-            'user_name'=>$this->user_name,
-            'encrypted_password'=>$this->encrypted_password
+            'user_name' => $this->user_name,
+            'encrypted_password' => $this->encrypted_password
         ]);
         file_put_contents($this->filename, $data);
         echo 'Username and encrypted password has been store a file “password.txt” <br>';
+        return true;
     }
 
-    public function load():bool {
+    /**
+     * Load file password.txt
+     *
+     * @return bool
+     */
+    public function load(): bool
+    {
         $data_content_file = file_get_contents($this->filename);
-        if($data_content_file){
+        if ($data_content_file) {
             $data = json_decode($data_content_file, true);
             $this->user_name = $data['user_name'];
             $this->encrypted_password = $data['encrypted_password'];
@@ -103,11 +142,21 @@ class PasswordManager
         return false;
     }
 
-    public function verifyPasswordPublic($password){
-        if($this->verifyPassword($password)){
+
+    /**
+     * Verify pasword
+     *
+     * @param string $password
+     * @return bool
+     */
+    public function verifyPasswordPublic(string $password)
+    {
+        if ($this->verifyPassword($password)) {
             echo 'Password correct!<br>';
-        }else{
-            echo 'Password incorrect!<br>';
+            return true;
         }
+        echo 'Password incorrect!<br>';
+        return false;
+
     }
 }
